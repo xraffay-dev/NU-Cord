@@ -1,9 +1,8 @@
 const Server = require("../Models/server");
 
 const registerUserToServer = async (user, batch, major, campus) => {
-    console.log("Registering user to server...", user);
+    console.log(`Registering ${user.username} user to server...`);
     let serverID = `${batch}-${major}-${campus}`;
-    console.log(`Server ID: ${serverID}`);
 
     let server = await Server.findOne({ serverID });
     
@@ -13,7 +12,8 @@ const registerUserToServer = async (user, batch, major, campus) => {
             users: [user._id], 
         });
         await server.save();
-        console.log(`✅ New server created: ${server.serverID}`);
+        console.log(`New server created: ${server.serverID}`);
+        console.log(`${user.username} added to new server: ${server.serverID}`);
     } else {
         if (!server.users.includes(user._id)) {
             server.users.push(user._id);
