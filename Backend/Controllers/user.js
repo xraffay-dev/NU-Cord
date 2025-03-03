@@ -1,27 +1,41 @@
 const User = require("../Models/user");
+const initializeDbs = require("../utils/initializeDbs");
+const extractDetailsFromEmail = require("../utils/extractDetails");
+const registerUserToServer = require("./server")
 
 const signUpOrLogin = async (req, res) => {
   try {
-    if (!req.tempUser) {
-      console.error("Error: No user details extracted");
-      return res.status(400).json({ error: "User details missing" });
+    if (!req.user?.emails?.[0]) {
+      return res.status(400).json({ error: "User authentication failed" });
     }
 
-    const existingUser = await User.findOne({ email: req.tempUser.email });
+    const userDetails = extractDetailsFromEmail(req.user);
 
-    if (existingUser) {
-      console.log("User found in DB, logging in...");
-      return res.json({ message: "Login successful", user: existingUser });
+    let user = await User.findOne({ email: userDetails.email });
+
+    if (!user) {
+      const { batch, campus, academicDegree, major } = await initializeDbs(userDetails);
+      
+      user = new User({
+        ...userDetails,
+        batch,
+        campus,
+        academicDegree,
+        major,
+      });
+
+      await user.save();
+      console.log(`New user created: ${user.username}`);
+      registerUserToServer(user, userDetails.batch, userDetails.major, userDetails.campus);
+
+    } else {
+      console.log(`User already exists: ${user.username}`);
     }
 
-    console.log("🆕 User not found, signing up...");
-    const newUser = new User(req.tempUser);
-    await newUser.save();
-
-    return res.json({ message: "Signup successful", user: newUser });
+    res.json({ message: "Signup/Login successful", user });
   } catch (error) {
     console.error("Error in signUpOrLogin:", error);
-    res.status(500).json({ error: "Server error in signUpOrLogin" });
+    res.status(500).json({ error: "Server error", details: error.message });
   }
 };
 

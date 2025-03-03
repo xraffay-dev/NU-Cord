@@ -36,7 +36,7 @@ function extractDetailsFromEmail(profile) {
   const profileTokens = profile.name.familyName.split(" ");
   const degree = checkDegree(profileTokens[0]);
 
-  const User = {
+  return {
     name: profile.name.givenName,
     email: profile.emails?.[0]?.value,
     username: profile.emails?.[0]?.value.split("@")[0],
@@ -44,7 +44,7 @@ function extractDetailsFromEmail(profile) {
     batch: profileTokens[1] || null, 
     campus: profileTokens[4] || null,
     academicDegree: degree[0],
-    major: degree[0]+" "+degree[1],
+    major: degree[0]+degree[1],
   };
 
   return User;
