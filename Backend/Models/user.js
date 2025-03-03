@@ -1,11 +1,16 @@
 const mongoose = require("mongoose");
-const { Schema } = mongoose; 
+const { Schema } = mongoose;
 
 const userSchema = new Schema(
   {
     name: {
       type: String,
       required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
     },
     username: {
       type: String,
@@ -15,11 +20,6 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
     },
     profileImageURL: {
       type: String,
@@ -33,51 +33,45 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    campus: {
+      type: String,
+      required: true,
+      enum: ["ISB", "KHI", "LHR", "PSH"],
+    },
     academicDegree: {
       type: String,
       required: true,
       enum: ["BS", "MS", "PhD"],
     },
-    dept: {
-      type: String,
-      required: true,
-      enum: [
-        "COMPUTING",
-        "MANAGEMENT",
-        "ELECTRICAL ENGINEERING",
-        "SCIENCES & HUMANITIES",
-        "CIVIL ENGINEERING",
-      ],
-    },
     major: {
       type: String,
       required: true,
       enum: [
-        "BS (Business Analytics)",
-        "BS (Accounting & Finance)",
-        "BS (Computer Science)",
-        "BS (Data Science)",
-        "BS (Software Engineering)",
-        "BS (Electrical Engineering)",
-        "BS (Civil Engineering)",
+        "BS BA",
+        "BS AF",
+        "BS CS",
+        "BS DS",
+        "BS SE",
+        "BS EE",
+        "BS CE",
 
-        "MS (Accounting & Finance)",
-        "Master of Business Administration",
-        "MS (Business Analytics)",
-        "MS (Computer Science)",
-        "MS (Data Science)",
-        "MS (Software Project Management)",
-        "MS (Electrical Engineering)",
-        "MS (Civil Engineering)",
-        "MS (Mathematics)",
-        "MS (English Language Teaching)",
-        "MS (Applied Linguistics)",
+        "MS AF",
+        "MBA",
+        "MS BA",
+        "MS CS",
+        "MS DS",
+        "MS SPM", //Software Project Management
+        "MS EE",
+        "MS CE",
+        "MS Math",
+        // "MS (English Language Teaching)",
+        "MS LING",
 
-        "PhD (Management Sciences)",
-        "PhD (Civil Engineering)",
-        "PhD (Computer Science)",
-        "PhD (Electrical Engineering)",
-        "PhD (Mathematics)",
+        "PhD MS",  //Management Sciences
+        "PhD CE",
+        "PhD CS",
+        "PhD EE",
+        "PhD Math",
       ],
     },
     role: {

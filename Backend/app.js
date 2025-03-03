@@ -5,24 +5,29 @@ const session = require("express-session");
 const passport = require("passport");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const userRoutes = require("./Routes/user");
 
-require("./utils/auth"); // Passport.js setup
+require("./Config/googleAuth");
 
 const app = express();
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:8000",
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 
-// Express Session
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "default_secret",
+    secret: process.env.SESSION_SECRET || "xraffay1",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false },
+    cookie: { secure: process.env.NODE_ENV === "production" },
   })
 );
 
@@ -37,40 +42,15 @@ mongoose
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
 // Routes
-app.get("/", (req, res) => {
-  res.send("Welcome to the Backend!");
-});
+app.get("/", (req, res) => res.send("Homepage!"));
+app.use("/user", userRoutes);
 
-// Google Auth Routes
-app.get(
-  "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
-
-app.get(
-  "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/" }),
-  (req, res) => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Authentication failed" });
-    }
-
-    const userData = {
-      id: req.user.id,
-      name: req.user.displayName,
-      firstName: req.user.name?.givenName || "",
-      email: req.user.emails[0]?.value || "",
-      profilePic: req.user.photos[0]?.value || "",
-    };
-
-    res.json(userData);
-  }
-);
-
-app.get("/logout", (req, res) => {
-  req.logout(() => res.send("Logged out successfully!"));
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: "Something went wrong!" });
 });
 
 // Server Start
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
