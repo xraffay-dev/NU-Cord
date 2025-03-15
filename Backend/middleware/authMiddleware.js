@@ -1,8 +1,8 @@
 const passport = require("passport");
-const { signUpOrLogin } = require("../controllers/userController");
-
-const googleAuth = passport.authenticate("google", { scope: ["profile", "email"] });
-
+const { signUpOrLoginService } = require("../services/userService");
+const googleAuth = passport.authenticate("google", {
+  scope: ["profile", "email"],
+});
 const googleAuthCallback = passport.authenticate("google", { session: false });
 
 const processUser = async (req, res) => {
@@ -10,15 +10,16 @@ const processUser = async (req, res) => {
     console.error("Authentication failed: No user object");
     return res.status(401).json({ error: "Authentication failed" });
   }
-  await signUpOrLogin(req, res);
+
+  const result = await signUpOrLoginService(req.user);
+  if (result.error) {
+    return res.status(400).json({ error: result.error });
+  }
+
+  // res.json({ message: "Signup/Login successful", user: result.user });
+  res.redirect("/");
 };
 
-const logout = (req, res) => {
-  req.session.destroy((err) => {
-    if (err) return res.status(500).json({ error: "Logout failed" });
-    res.clearCookie("connect.sid");
-    res.json({ message: "Logged out successfully" });
-  });
-};
 
-module.exports = { googleAuth, googleAuthCallback, processUser, logout };
+
+module.exports = { googleAuth, googleAuthCallback, processUser};

@@ -1,6 +1,6 @@
 const { Router } = require("express");
-const { googleAuth, googleAuthCallback, logout, processUser } = require("../middleware/authMiddleware");
-const { signIn } = require("../controllers/userController");
+const { googleAuth, googleAuthCallback, processUser } = require("../middleware/authMiddleware");
+const { signIn, logout } = require("../controllers/userController");
 
 const router = Router();
 
