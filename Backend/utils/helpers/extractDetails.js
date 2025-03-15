@@ -23,15 +23,6 @@ const checkDegree = (token) => {
 };
 
 function extractDetailsFromEmail(profile) {
-  const emailRegex = /^l(\d{6})@lhr\.nu\.edu\.pk$/;
-  const match = profile.emails?.[0]?.value.match(emailRegex);
-
-  if (!match) {
-    console.error("Authentication failed: Invalid Email");
-    return res.status(401).json({ error: "Authentication failed" });
-  }
-
-  console.log("Valid Email Entered.");
 
   const profileTokens = profile.name.familyName.split(" ");
   const degree = checkDegree(profileTokens[0]);

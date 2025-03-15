@@ -1,5 +1,5 @@
 const passport = require("passport");
-const { signUpOrLogin } = require("../Controllers/user");
+const { signUpOrLogin } = require("../controllers/userController");
 
 const googleAuth = passport.authenticate("google", { scope: ["profile", "email"] });
 

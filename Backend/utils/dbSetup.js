@@ -1,7 +1,7 @@
-const Batch = require("../Models/batch");
-const Campus = require("../Models/campus");
-const AcademicDegree = require("../Models/academicDegree");
-const Major = require("../Models/major");
+const Batch = require("../models/batch");
+const Campus = require("../models/campus");
+const AcademicDegree = require("../models/academicDegree");
+const Major = require("../models/major");
 
 const initializeDbs = async (userDetails) => {
   try {

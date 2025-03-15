@@ -1,4 +1,4 @@
-const Server = require("../Models/server");
+const Server = require("../models/server");
 
 const registerUserToServer = async (user, batch, major, campus) => {
     console.log(`Registering ${user.username} user to server...`);

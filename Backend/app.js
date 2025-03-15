@@ -1,15 +1,18 @@
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const userRoutes = require("./Routes/user");
+const connectDB = require("./config/dbConfig.js");
+const userRoutes = require("./routes/userRoutes.js");
 
-require("./Config/googleAuth");
+require("./config/googleAuth.js");
 
 const app = express();
+
+// Connect to MongoDB
+connectDB();
 
 // Middleware
 app.use(express.json());
@@ -21,7 +24,6 @@ app.use(
   })
 );
 app.use(cookieParser());
-
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "xraffay1",
@@ -35,12 +37,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// MongoDB Connection
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
-
 // Routes
 app.get("/", (req, res) => res.send("Homepage!"));
 app.use("/user", userRoutes);
@@ -53,4 +49,4 @@ app.use((err, req, res, next) => {
 
 // Server Start
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

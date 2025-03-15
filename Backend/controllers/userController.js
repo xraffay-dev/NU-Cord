@@ -1,20 +1,24 @@
 const bcrypt = require("bcryptjs");
-const User = require("../Models/user");
-const initializeDbs = require("../utils/initializeDbs");
-const encryptPassword = require("../utils/encryptPassword");
-const extractDetailsFromEmail = require("../utils/extractDetails");
-const registerUserToServer = require("./server");
+const User = require("../models/user");
+const initializeDbs = require("../utils/dbSetup");
+const encryptPassword = require("../utils/helpers/encryptPassword");
+const extractDetailsFromEmail = require("../utils/helpers/extractDetails");
+const isValidFastNuEmail = require("../utils/validators/emailValidator");
+const registerUserToServer = require("./serverController");
 
 const signUpOrLogin = async (req, res) => {
   try {
-    if (!req.user?.emails?.[0]) {
-      return res.status(400).json({ error: "User authentication failed" });
+
+    let validEmail = isValidFastNuEmail(req.user.emails[0].value);
+    if (!validEmail) {
+      console.error("Authentication failed: Invalid Email");
+      return res.status(401).json({ error: "Authentication failed" });
     }
 
+    console.log("Valid Email Entered.");
+
     const userDetails = extractDetailsFromEmail(req.user);
-
     let user = await User.findOne({ email: userDetails.email });
-
     if (!user) {
       const { batch, campus, academicDegree, major } = await initializeDbs(
         userDetails
