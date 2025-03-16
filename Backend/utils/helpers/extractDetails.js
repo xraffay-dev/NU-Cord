@@ -6,13 +6,13 @@ const checkDegree = (token) => {
     "MS AF", "MBA", "MS BA", "MS CS", "MS DS", "MS SPM", "MS EE", "MS CE", "MS Math", "MS LING",
     "PhD MS", "PhD CE", "PhD CS", "PhD EE", "PhD Math",
   ]);
-
   let match = token.match(/^(BS|MS|PhD)([A-Za-z]+)/);
   if (!match) return [null, null];
-
+  
   let academicDegree = match[1]; 
   let major = match[2]; 
   let fullDegreeName = `${academicDegree} ${major}`;
+  console.log("Checking degree: ", token);    //BCS OF PHD ERROR, REMOVE AFTER THAT.
 
   if (degreeList.has(fullDegreeName)) {
     return [academicDegree, major];
@@ -23,7 +23,7 @@ const checkDegree = (token) => {
 };
 
 function extractDetailsFromEmail(profile) {
-
+  console.log("Extracting details from: ", profile);
   const profileTokens = profile.name.familyName.split(" ");
   const degree = checkDegree(profileTokens[0]);
 

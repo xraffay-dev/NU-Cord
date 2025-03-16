@@ -10,19 +10,17 @@ const signUpOrLoginService = async (userProfile) => {
   const validEmail = isValidFastNuEmail(userProfile.emails[0].value);
   if (!validEmail) {
     console.error("Authentication failed: Invalid Email");
-    return { error: "Authentication failed: Invalid Email" }; // Return error instead of throwing
+    return { error: "Authentication failed: Invalid Email" };
   }
-
   const userDetails = extractDetailsFromEmail(userProfile);
+  console.log("✅ User Details before finding in DB:", userDetails);
   let user = await User.findOne({ email: userDetails.email });
-
   if (!user) {
+    console.log("✅ User does not exist, initializing DBs...");
     const { batch, campus, academicDegree, major } = await initializeDbs(
       userDetails
     );
-
     userDetails.password = await encryptPassword(userDetails.password);
-
     user = new User({
       ...userDetails,
       batch,
@@ -30,19 +28,12 @@ const signUpOrLoginService = async (userProfile) => {
       academicDegree,
       major,
     });
-
     await user.save();
-    console.log(`New user created: ${user.username}`);
-    await registerUserToServer(
-      user,
-      userDetails.batch,
-      userDetails.major,
-      userDetails.campus
-    );
+    console.log(`🎉 New user created: ${user.username}`);
+    await registerUserToServer(user, batch, major, campus);
   } else {
-    console.log(`User already exists: ${user.username}`);
+    console.log(`👤 User already exists: ${user.username}`);
   }
-
   return { user };
 };
 
