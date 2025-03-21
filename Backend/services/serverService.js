@@ -3,7 +3,7 @@ const Batch = require("../models/batch");
 const Major = require("../models/major");
 const Campus = require("../models/campus");
 
-const registerUserToServer = async (user, batchId, majorId, campusId) => {
+const registerUserToServer = async (userId, batchId, majorId, campusId) => {
   try {
     const batch = await Batch.findById(batchId);
     const major = await Major.findById(majorId);
@@ -20,13 +20,13 @@ const registerUserToServer = async (user, batchId, majorId, campusId) => {
       server = new Server({
         serverID,
         name: serverID, 
-        users: [user._id],
+        users: [userId],
       });
       await server.save();
       console.log(`✅ New server created: ${server.name}`);
     } else {
-      if (!server.users.includes(user._id)) {
-        server.users.push(user._id);
+      if (!server.users.includes(userId)) {
+        server.users.push(userId);
         await server.save();
         console.log(`✅ User added to existing server: ${server.name}`);
       } else {

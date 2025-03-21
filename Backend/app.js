@@ -3,7 +3,6 @@ const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
 const cors = require("cors");
-const cookieParser = require("cookie-parser");
 const connectDB = require("./config/dbConfig.js");
 const userRoutes = require("./routes/userRoutes.js");
 
@@ -17,19 +16,13 @@ connectDB();
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL || "http://localhost:8000",
-    credentials: true,
-  })
-);
-app.use(cookieParser());
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "xraffay1",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: process.env.NODE_ENV === "production" },
+    // cookie: { secure: process.env.NODE_ENV === "production" },
   })
 );
 

@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const campusSchema = new Schema(
   {
-    name: { type: String, required: true, unique: true, enum: ["ISB", "KHI", "LHR", "PSH"] },
+    name: { type: String, required: true, unique: true, enum: ["ISB", "KHI", "LHR", "PSH", "CFD"] },
     address: { type: String, required: true },
   },
   { timestamps: true }

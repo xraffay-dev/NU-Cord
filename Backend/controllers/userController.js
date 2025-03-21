@@ -1,12 +1,29 @@
-const { signUpOrLoginService, signInService } = require("../services/userService");
+const { signUpService, signInService } = require("../services/userService");
+const { registerUserToServer } = require("../services/serverService"); 
 
-const signUpOrLogin = async (req, res) => {
+const signUp = async (req, res) => {
   try {
-    const result = await signUpOrLoginService(req.user);
-    res.json({ message: "Signup/Login successful", user: result.user });
+    const result = await signUpService(req.user);
+    const user = result.user;
+
+    if (!user) {
+      return res.status(400).json({ error: "User registration failed" });
+    }
+
+    // Register user to server
+    await registerUserToServer(user._id, user.batch, user.major, user.campus);
+
+    return res
+      .status(200)
+      .json({ message: "User registered successfully", user });
   } catch (error) {
-    console.error("Error in signUpOrLogin:", error);
-    res.status(500).json({ error: "Server error", details: error.message });
+    console.error("Error in signUp:", error);
+
+    if (!res.headersSent) {
+      return res
+        .status(500)
+        .json({ error: "Server error", details: error.message });
+    }
   }
 };
 
@@ -30,4 +47,4 @@ const logout = (req, res) => {
   });
 };
 
-module.exports = { signUpOrLogin, signIn, logout };
+module.exports = { signUp, signIn, logout };
